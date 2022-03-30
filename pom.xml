@@ -12,6 +12,11 @@
   <name>microservice_01</name>
   <url>https://github.com/waelhassan-dev/microservice_01.git</url>
 
+  <modules>
+    <module>customer</module>
+  </modules>
+
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
