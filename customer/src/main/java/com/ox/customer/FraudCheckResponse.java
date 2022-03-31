@@ -1,4 +1,4 @@
-package com.ox.fraud;
+package com.ox.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
