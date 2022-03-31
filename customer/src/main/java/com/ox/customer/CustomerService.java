@@ -5,8 +5,10 @@ import com.ox.clients.fraud.FraudClient;
 import com.ox.clients.notification.NotificationClient;
 import com.ox.clients.notification.NotificationRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CustomerService {
@@ -27,13 +29,13 @@ public class CustomerService {
         //todo: check if email not taken
         customerRepository.saveAndFlush(customer);
 
-        //todo: check if fraudster
         FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
+        log.info("checked .. is a fraudster customer: " + fraudCheckResponse.isFraudster());
 
         if (fraudCheckResponse.isFraudster())
             throw new IllegalStateException("fraudster !");
 
-        //todo: send notification
+        log.info("sending notification to the customer");
         notificationClient.sendNotification(
                 NotificationRequest.builder()
                         .toCustomerId(customer.getId())
