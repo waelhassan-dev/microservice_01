@@ -2,9 +2,10 @@ package com.ox.customer;
 
 import com.ox.clients.fraud.FraudCheckResponse;
 import com.ox.clients.fraud.FraudClient;
+import com.ox.clients.notification.NotificationClient;
+import com.ox.clients.notification.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
@@ -12,6 +13,7 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final FraudClient fraudClient;
+    private final NotificationClient notificationClient;
 
 
     public void registerCustomer(CustomerRegistrationRequest request) {
@@ -32,5 +34,13 @@ public class CustomerService {
             throw new IllegalStateException("fraudster !");
 
         //todo: send notification
+        notificationClient.sendNotification(
+                NotificationRequest.builder()
+                        .toCustomerId(customer.getId())
+                        .toCustomerEmail(customer.getEmail())
+                        .message(String.format("Hi %s, welcome to microservice_01..", customer.getFirstName()))
+                        .build()
+        );
+
     }
 }
