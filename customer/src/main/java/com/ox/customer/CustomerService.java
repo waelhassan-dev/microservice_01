@@ -1,5 +1,6 @@
 package com.ox.customer;
 
+import com.ox.amqp.RabbitMQMessageProducer;
 import com.ox.clients.fraud.FraudCheckResponse;
 import com.ox.clients.fraud.FraudClient;
 import com.ox.clients.notification.NotificationClient;
@@ -16,6 +17,8 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final FraudClient fraudClient;
     private final NotificationClient notificationClient;
+    private final RabbitMQMessageProducer rabbitMQMessageProducer;
+
 
 
     public void registerCustomer(CustomerRegistrationRequest request) {
@@ -36,12 +39,16 @@ public class CustomerService {
             throw new IllegalStateException("fraudster !");
 
         log.info("sending notification to the customer");
-        notificationClient.sendNotification(
-                NotificationRequest.builder()
-                        .toCustomerId(customer.getId())
-                        .toCustomerEmail(customer.getEmail())
-                        .message(String.format("Hi %s, welcome to microservice_01..", customer.getFirstName()))
-                        .build()
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .toCustomerId(customer.getId())
+                .toCustomerEmail(customer.getEmail())
+                .message(String.format("Hi %s, welcome to microservice_01..", customer.getFirstName()))
+                .build();
+
+        rabbitMQMessageProducer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key"
         );
 
     }
