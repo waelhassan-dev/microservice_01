@@ -1,5 +1,6 @@
 docker compose up -d
 docker compose ps
+docker ps --format=$FORMAT
 docker logs [container name]
 docker build
 docker pull
@@ -7,3 +8,6 @@ docker run
 docker logout
 docker login
 mvn clean package -P build-docker-image
+docker compose stop
+docker compose start
+docker compose down
